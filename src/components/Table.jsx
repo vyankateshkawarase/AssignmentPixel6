@@ -1,6 +1,7 @@
 // Import necessary hooks and libraries
 import { useState, useEffect } from "react";
-import { FaFilter,FaArrowUp,FaArrowDown } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
+import { IoIosArrowRoundUp,IoIosArrowRoundDown } from "react-icons/io";
 import axios from "axios";
 
 const Table = () => {
@@ -19,21 +20,35 @@ const Table = () => {
     direction: 'ascending', // Default sort direction
   });
 
+  // State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
+
   // Effect hook to fetch data when the component mounts
   useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]); // Fetch data when the currentPage changes
+
+  // eslint-disable-next-line no-unused-vars
+  const fetchData = () => {
     axios
       .get("https://dummyjson.com/users")
       .then((response) => {
         setData(response.data.users); // Store fetched data in state
+        setTotalPages(Math.ceil(response.data.users.length / itemsPerPage)); // Calculate total pages
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error); // Log any errors
       });
-  }, []); // Empty dependency array means this runs once on mount
+  };
 
   // Mapping for country names to abbreviations
   const countryMap = {
-    "United States": "USA", // Example country mapping
+    "United States": "USA", //country mapping
+    "India": "IND",
+    "United Arab Emirates": "UAE",
+    "United Kingdom": "UK"
   };
 
   // Mapping for gender values
@@ -63,6 +78,12 @@ const Table = () => {
     return 0;
   });
 
+  // Get current page data
+  const currentPageData = sortedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   // Handler for changing sort configuration
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -70,6 +91,11 @@ const Table = () => {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+  };
+
+  // Handler for changing the page
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -124,7 +150,7 @@ const Table = () => {
                 onClick={() => handleSort('id')}
               >
                 ID
-                {sortConfig.key === 'id' && (sortConfig.direction === 'ascending' ? <FaArrowUp className="ml-6 mb-4 -mt-5" /> : <FaArrowDown className="ml-6 mb-4 -mt-5" />)}
+                {sortConfig.key === 'id' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-6 mb-4 -mt-4" /> : <IoIosArrowRoundDown className="ml-6 mb-4 -mt-5" />)}
               </th>
               <th className="py-2 px-4 bg-gray-200 text-left">Image</th>
               <th
@@ -132,22 +158,22 @@ const Table = () => {
                 onClick={() => handleSort('fullName')}
               >
                 Full Name
-                {sortConfig.key === 'fullName' && (sortConfig.direction === 'ascending' ? <FaArrowUp className="ml-20 mb-3 -mt-5" /> : <FaArrowDown className="ml-20 mb-3 -mt-5" />)}
+                {sortConfig.key === 'fullName' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-20 mb-3 -mt-5" /> : <IoIosArrowRoundDown className="ml-20 mb-3 -mt-5" />)}
               </th>
               <th
                 className="py-2 px-4 bg-gray-200 text-left cursor-pointer"
                 onClick={() => handleSort('age')}
               >
                 Demography (Age)
-                {sortConfig.key === 'age' && (sortConfig.direction === 'ascending' ? <FaArrowUp className="ml-36 mb-4 -mt-5" /> : <FaArrowDown className="ml-36 mb-4 -mt-5" />)}
+                {sortConfig.key === 'age' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-36 mb-4 -mt-5" /> : <IoIosArrowRoundDown className="ml-36 mb-4 -mt-5" />)}
               </th>
               <th className="py-2 px-4 bg-gray-200 text-left">Designation</th>
               <th className="py-2 px-4 bg-gray-200 text-left">Location</th>
             </tr>
           </thead>
           <tbody>
-            {/* Render sorted data */}
-            {sortedData.map((user) => (
+            {/* Render current page data */}
+            {currentPageData.map((user) => (
               <tr key={user.id} className="border-b">
                 <td className="py-2 px-4">{user.id}</td>
                 <td className="py-2 px-4">
@@ -169,6 +195,24 @@ const Table = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      {/* Pagination controls */}
+      <div className="flex justify-between mt-4">
+        <button
+          className="bg-gray-200 p-2 rounded-md"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="p-2">{`Page ${currentPage} of ${totalPages}`}</span>
+        <button
+          className="bg-gray-200 p-2 rounded-md"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
