@@ -1,32 +1,27 @@
 // Import necessary hooks and libraries
 import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa";
-import { IoIosArrowRoundUp,IoIosArrowRoundDown } from "react-icons/io";
+import { IoIosArrowRoundUp, IoIosArrowRoundDown } from "react-icons/io";
 import axios from "axios";
 
 const Table = () => {
-  // State for storing data fetched from the API
-  const [data, setData] = useState([]);
   
-  // State for storing form data (country and gender filters)
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState([]); // State for storing data fetched from the API
+  const [formData, setFormData] = useState({ // State for storing form data (country and gender filters)
     country: "",
     gender: "",
   });
 
-  // State for managing sorting
-  const [sortConfig, setSortConfig] = useState({
-    key: 'id', // Default sort by 'id'
-    direction: 'ascending', // Default sort direction
+  const [sortConfig, setSortConfig] = useState({  // State for managing sorting
+    key: "id", // Default sort by 'id'
+    direction: "ascending", // Default sort direction
   });
 
-  // State for pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);  // State for pagination
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
-  // Effect hook to fetch data when the component mounts
-  useEffect(() => {
+  useEffect(() => {  // Effect hook to fetch data when the component mounts
     fetchData(currentPage);
   }, [currentPage]); // Fetch data when the currentPage changes
 
@@ -43,69 +38,65 @@ const Table = () => {
       });
   };
 
-  // Mapping for country names to abbreviations
-  const countryMap = {
+  const countryMap = {  // Mapping for country names to abbreviations
     "United States": "USA", //country mapping
-    "India": "IND",
+    India: "IND",
     "United Arab Emirates": "UAE",
-    "United Kingdom": "UK"
+    "United Kingdom": "UK",
   };
 
-  // Mapping for gender values
-  const genderMap = {
-    male: "Male",
-    female: "Female",
+  const genderMap = {  // Mapping for gender values
+    male: "M",
+    female: "F",
     other: "Other",
   };
 
-  // Filter data based on form inputs (country and gender)
-  const filteredData = data.filter((user) => {
+  const filteredData = data.filter((user) => {  // Filter data based on form inputs (country and gender)
     return (
       (formData.country === "" ||
-        countryMap[user.address.country] === formData.country || user.address.country === formData.country) &&
-      (formData.gender === "" || genderMap[user.gender] === formData.gender || user.gender === formData.gender)
+        countryMap[user.address.country] === formData.country ||
+        user.address.country === formData.country) &&
+      (formData.gender === "" ||
+        genderMap[user.gender] === formData.gender ||
+        user.gender === formData.gender)
     );
   });
 
-  // Sort data based on the sortConfig state
-  const sortedData = [...filteredData].sort((a, b) => {
+  const sortedData = [...filteredData].sort((a, b) => { // Sort data based on the sortConfig state
     if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'ascending' ? -1 : 1;
+      return sortConfig.direction === "ascending" ? -1 : 1;
     }
     if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'ascending' ? 1 : -1;
+      return sortConfig.direction === "ascending" ? 1 : -1;
     }
     return 0;
   });
 
-  // Get current page data
-  const currentPageData = sortedData.slice(
+  const currentPageData = sortedData.slice(  // Get current page data
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Handler for changing sort configuration
-  const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+  const handleSort = (key) => {  // Handler for changing sort configuration
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
-  // Handler for changing the page
-  const handlePageChange = (page) => {
+  const handlePageChange = (page) => {  // Handler for changing the page
     setCurrentPage(page);
   };
 
   return (
     <div className="container mx-auto p-4">
-      {/* Filter section */}
       <div className="flex items-center mb-4">
         <div className="flex-grow">
           <p className="font-bold text-3xl">Employees</p>
         </div>
-        <FaFilter className="text-xl ml-2 mt-1 text-red-500" /> {/* Filter icon */}
+        {/* Filter section */}
+        <FaFilter className="text-xl ml-2 mt-1 text-red-500" />{" "} {/* Filter icon */}
         {/* Country filter dropdown */}
         <div className="ml-2 w-full md:w-1/3">
           <select
@@ -123,6 +114,7 @@ const Table = () => {
             <option value="UAE">UAE</option>
           </select>
         </div>
+        {/* End Country filter dropdown */}
         {/* Gender filter dropdown */}
         <div className="ml-2 w-full md:w-1/3">
           <select
@@ -139,7 +131,9 @@ const Table = () => {
             <option value="other">Other</option>
           </select>
         </div>
+        {/* End Gender filter dropdown */}
       </div>
+      {/* End Filter section */}
       {/* Table section */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
@@ -147,25 +141,40 @@ const Table = () => {
             <tr>
               <th
                 className="py-2 px-4 bg-gray-200 text-left cursor-pointer"
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort("id")}
               >
                 ID
-                {sortConfig.key === 'id' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-6 mb-4 -mt-4" /> : <IoIosArrowRoundDown className="ml-6 mb-4 -mt-5" />)}
+                {sortConfig.key === "id" &&
+                  (sortConfig.direction === "ascending" ? (
+                    <IoIosArrowRoundUp className="ml-6 mb-4 -mt-4" />
+                  ) : (
+                    <IoIosArrowRoundDown className="ml-6 mb-4 -mt-5" />
+                  ))}
               </th>
               <th className="py-2 px-4 bg-gray-200 text-left">Image</th>
               <th
                 className="py-2 px-4 bg-gray-200 text-left cursor-pointer"
-                onClick={() => handleSort('fullName')}
+                onClick={() => handleSort("fullName")}
               >
                 Full Name
-                {sortConfig.key === 'fullName' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-20 mb-3 -mt-5" /> : <IoIosArrowRoundDown className="ml-20 mb-3 -mt-5" />)}
+                {sortConfig.key === "fullName" &&
+                  (sortConfig.direction === "ascending" ? (
+                    <IoIosArrowRoundUp className="ml-20 mb-3 -mt-5" />
+                  ) : (
+                    <IoIosArrowRoundDown className="ml-20 mb-3 -mt-5" />
+                  ))}
               </th>
               <th
                 className="py-2 px-4 bg-gray-200 text-left cursor-pointer"
-                onClick={() => handleSort('age')}
+                onClick={() => handleSort("age")}
               >
                 Demography (Age)
-                {sortConfig.key === 'age' && (sortConfig.direction === 'ascending' ? <IoIosArrowRoundUp className="ml-36 mb-4 -mt-5" /> : <IoIosArrowRoundDown className="ml-36 mb-4 -mt-5" />)}
+                {sortConfig.key === "age" &&
+                  (sortConfig.direction === "ascending" ? (
+                    <IoIosArrowRoundUp className="ml-36 mb-4 -mt-5" />
+                  ) : (
+                    <IoIosArrowRoundDown className="ml-36 mb-4 -mt-5" />
+                  ))}
               </th>
               <th className="py-2 px-4 bg-gray-200 text-left">Designation</th>
               <th className="py-2 px-4 bg-gray-200 text-left">Location</th>
@@ -193,9 +202,11 @@ const Table = () => {
                 }`}</td>
               </tr>
             ))}
+            {/* End Render current page data */}
           </tbody>
         </table>
       </div>
+      {/* End Table section */}
       {/* Pagination controls */}
       <div className="flex justify-between mt-4">
         <button
@@ -214,6 +225,7 @@ const Table = () => {
           Next
         </button>
       </div>
+      {/* End Pagination controls */}
     </div>
   );
 };
