@@ -38,14 +38,14 @@ const Table = () => {
       });
   };
 
-  const countryMap = {  // Mapping for country names to abbreviations
+  const CountryMap = {  // Mapping for country names to abbreviations
     "United States": "USA", //country mapping
     India: "IND",
     "United Arab Emirates": "UAE",
     "United Kingdom": "UK",
   };
 
-  const genderMap = {  // Mapping for gender values
+  const GenderMap = {  // Mapping for gender values
     male: "M",
     female: "F",
     other: "Other",
@@ -54,10 +54,10 @@ const Table = () => {
   const filteredData = data.filter((user) => {  // Filter data based on form inputs (country and gender)
     return (
       (formData.country === "" ||
-        countryMap[user.address.country] === formData.country ||
+        CountryMap[user.address.country] === formData.country ||
         user.address.country === formData.country) &&
       (formData.gender === "" ||
-        genderMap[user.gender] === formData.gender ||
+        GenderMap[user.gender] === formData.gender ||
         user.gender === formData.gender)
     );
   });
@@ -193,12 +193,12 @@ const Table = () => {
                   />
                 </td>
                 <td className="py-2 px-4">{`${user.firstName} ${user.maidenName} ${user.lastName}`}</td>
-                <td className="py-2 px-4">{`${genderMap[user.gender]}/${
+                <td className="py-2 px-4">{`${GenderMap[user.gender]}/${
                   user.age
                 }`}</td>
                 <td className="py-2 px-4">{user.company.title}</td>
                 <td className="py-2 px-4">{`${user.address.state}, ${
-                  countryMap[user.address.country] || user.address.country
+                  CountryMap[user.address.country] || user.address.country
                 }`}</td>
               </tr>
             ))}
